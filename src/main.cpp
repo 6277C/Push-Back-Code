@@ -1,12 +1,6 @@
 #include "main.h"
-// #include "lemlib/api.hpp" // IWYU pragma: keep
-// //#include "lemlib/chassis/chassis.hpp"
-// #include "pros/adi.hpp"
-// #include "pros/misc.h"
-// #include "pros/motors.h"
-// #include "pros/motors.hpp"
-
-
+#include "lemlib/api.hpp" // IWYU pragma: keep
+#include "pros/rtos.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -60,33 +54,33 @@ void competition_initialize() {}
  */
 int autoSelection = 0;
 void autonomous() {
-  autoSelection = (auto_selector.get_value() / 512);
-  switch (autoSelection) {
-  case 0:
-    auto_0();
-    break;
-  case 1:
-    auto_1();
-    break;
-  case 2:
-    auto_2();
-    break;
-  case 3:
-    auto_3();
-    break;
-  case 4:
-    auto_4();
-    break;
-  case 5:
-    auto_5();
-    break;
-  case 6:
-    auto_6();
-    break;
-  case 7:
-    auto_7();
-    break;
-  }
+  // autoSelection = (auto_selector.get_value() / 512); //FIX TO ADD DEAD ZONE AT 0 POINT
+  // switch (autoSelection) {
+  // case 0:
+  //   auto_0();
+  //   break;
+  // case 1:
+  //   auto_1();
+  //   break;
+  // case 2:
+  //   auto_2();
+  //   break;
+  // case 3:
+  //   auto_3();
+  //   break;
+  // case 4:
+  //   auto_4();
+  //   break;
+  // case 5:
+  //   auto_5();
+  //   break;
+  // case 6:
+  //   auto_6();
+  //   break;
+  // case 7:
+  //   auto_7();
+  //   break;
+  // }
 }
 
 /**

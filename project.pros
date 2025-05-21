@@ -299,7 +299,8 @@
     },
     "upload_options": {
       "description": "",
-      "icon": "pros"
+      "icon": "pros",
+      "slot": 1
     },
     "use_early_access": false
   }

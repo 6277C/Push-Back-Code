@@ -11,31 +11,31 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Left Motor Group
-pros::MotorGroup left_motors({-1, -2, -3}, pros::MotorGearset::blue);
+pros::MotorGroup left_motors({-11, -12, -13}, pros::MotorGearset::blue);
 // Right Motor Group
-pros::MotorGroup right_motors({4, 5, 6}, pros::MotorGearset::blue);
+pros::MotorGroup right_motors({18, 19, 20}, pros::MotorGearset::blue);
 
 // Subsystem Motors
 pros::Motor intake(10, pros::MotorGearset::green);
 
 // IMU (Inertial Sensor)
-pros::IMU imu(10);
+pros::IMU imu(9);
 
 // Vertical Tracking Wheel
-pros::Rotation forward_tracker(7);
+pros::Rotation forward_tracker(5);
 // Horizontal Tracking Wheel
-pros::Rotation sideways_tracker(8);
+pros::Rotation sideways_tracker(1);
 
-pros::adi::Potentiometer auto_selector(1);
+pros::adi::Potentiometer auto_selector(4);
 
 // Drivetrain Settings
-lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 14,
+lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11,
                               lemlib::Omniwheel::NEW_275, 600, 2);
 
 lemlib::TrackingWheel horizontal_tracking_wheel(&sideways_tracker,
-                                                lemlib::Omniwheel::NEW_2, -1);
+                                                lemlib::Omniwheel::NEW_2, 1);
 lemlib::TrackingWheel vertical_tracking_wheel(&forward_tracker,
-                                              lemlib::Omniwheel::NEW_2, -1);
+                                              lemlib::Omniwheel::NEW_2, -3);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr,
                             &horizontal_tracking_wheel, nullptr, &imu);
