@@ -42,13 +42,13 @@ pros::Rotation sideways_tracker(1);
 pros::adi::Potentiometer auto_selector(4);
 
 // Drivetrain Settings
-lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11,
-                              lemlib::Omniwheel::NEW_275, 600, 2);
+lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11.25,
+                              lemlib::Omniwheel::NEW_275, 450, 2);
 
 lemlib::TrackingWheel horizontal_tracking_wheel(&sideways_tracker,
                                                 lemlib::Omniwheel::NEW_2, 1);
 lemlib::TrackingWheel vertical_tracking_wheel(&forward_tracker,
-                                              lemlib::Omniwheel::NEW_2, -3);
+                                              lemlib::Omniwheel::NEW_2, .25);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr,
                             &horizontal_tracking_wheel, nullptr, &my_imu);
