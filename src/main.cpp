@@ -52,35 +52,36 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-int autoSelection = 0;
 void autonomous() {
-  // autoSelection = (auto_selector.get_value() / 512); //FIX TO ADD DEAD ZONE AT 0 POINT
-  // switch (autoSelection) {
-  // case 0:
-  //   auto_0();
-  //   break;
-  // case 1:
-  //   auto_1();
-  //   break;
-  // case 2:
-  //   auto_2();
-  //   break;
-  // case 3:
-  //   auto_3();
-  //   break;
-  // case 4:
-  //   auto_4();
-  //   break;
-  // case 5:
-  //   auto_5();
-  //   break;
-  // case 6:
-  //   auto_6();
-  //   break;
-  // case 7:
-  //   auto_7();
-  //   break;
-  // }
+  int autoSelection = (auto_selector.get_value() / 
+                      128   //divide the pot max value (1024) by the number of autos to get this value
+  );
+  switch (autoSelection) {
+  case 0:
+    auto_0();
+    break;
+  case 1:
+    auto_1();
+    break;
+  case 2:
+    auto_2();
+    break;
+  case 3:
+    auto_3();
+    break;
+  case 4:
+    auto_4();
+    break;
+  case 5:
+    auto_5();
+    break;
+  case 6:
+    auto_6();
+    break;
+  case 7:
+    auto_7();
+    break;
+  }
 }
 
 /**
