@@ -1,6 +1,6 @@
 #include "main.h"
 void auto_0(){
-    chassis.moveToPose(20, 15, 90, 4000);
+    
 }
 void auto_1(){}
 void auto_2(){}

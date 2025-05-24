@@ -18,8 +18,21 @@ pros::MotorGroup right_motors({18, 19, 20}, pros::MotorGearset::blue);
 // Subsystem Motors
 pros::Motor intake(10, pros::MotorGearset::green);
 
-// IMU (Inertial Sensor)
-pros::IMU imu(9);
+class CustomIMU : public pros::IMU {
+public:
+  CustomIMU(int port, double scalar)
+      : pros::IMU(port), m_port(port), m_scalar(scalar) {}
+  virtual double get_rotation() const {
+    return pros::c::imu_get_rotation(m_port) * m_scalar;
+  }
+
+private:
+  const int m_port;
+  const double m_scalar;
+};
+
+// create custom IMU with a scalar
+CustomIMU my_imu(9, 1.014);
 
 // Vertical Tracking Wheel
 pros::Rotation forward_tracker(5);
@@ -29,16 +42,16 @@ pros::Rotation sideways_tracker(1);
 pros::adi::Potentiometer auto_selector(4);
 
 // Drivetrain Settings
-lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11,
-                              lemlib::Omniwheel::NEW_275, 600, 2);
+lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11.25,
+                              lemlib::Omniwheel::NEW_275, 450, 2);
 
 lemlib::TrackingWheel horizontal_tracking_wheel(&sideways_tracker,
                                                 lemlib::Omniwheel::NEW_2, 1);
 lemlib::TrackingWheel vertical_tracking_wheel(&forward_tracker,
-                                              lemlib::Omniwheel::NEW_2, -3);
+                                              lemlib::Omniwheel::NEW_2, .25);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr,
-                            &horizontal_tracking_wheel, nullptr, &imu);
+                            &horizontal_tracking_wheel, nullptr, &my_imu);
 
 // Lateral PID Controller
 lemlib::ControllerSettings
