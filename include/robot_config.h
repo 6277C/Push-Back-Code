@@ -12,6 +12,7 @@ extern pros::Controller controller;
 extern pros::MotorGroup left_motors;
 extern pros::MotorGroup right_motors;
 extern pros::Motor intake;
+extern pros::Motor intake2;
 extern pros::IMU imu;
 extern pros::Rotation forward_tracker;
 extern pros::Rotation sideways_tracker;

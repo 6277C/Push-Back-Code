@@ -109,8 +109,10 @@ void opcontrol() {
 
     if (ss1) {
       intake.move(127);
+      intake2.move(127);
     } else {
       intake.brake();
+      intake2.brake();
     }
 
     // get left y and right y positions
