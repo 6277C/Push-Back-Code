@@ -11,13 +11,12 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Left Motor Group
-pros::MotorGroup left_motors({-11, -12, -13}, pros::MotorGearset::blue);
+pros::MotorGroup right_motors({20, -19, 10}, pros::MotorGearset::blue);
 // Right Motor Group
-pros::MotorGroup right_motors({18, 19, 20}, pros::MotorGearset::blue);
+pros::MotorGroup left_motors({-11, 12, -2}, pros::MotorGearset::blue);
 
 // Subsystem Motors
-pros::Motor intake(6, pros::MotorGearset::green);
-pros::Motor intake2(-7, pros::MotorGearset::green);
+pros::Motor intake(1, pros::MotorGearset::blue);
 
 class CustomIMU : public pros::IMU {
 public:

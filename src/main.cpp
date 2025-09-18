@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "pros/misc.h"
 #include "pros/rtos.hpp"
 
 /**
@@ -53,9 +54,10 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-  int autoSelection = (auto_selector.get_value() / 
-                      128   //divide the pot max value (1024) by the number of autos to get this value
-  );
+  // int autoSelection = (auto_selector.get_value() / 
+  //                     128   //divide the pot max value (1024) by the number of autos to get this value
+  // );
+  int autoSelection = 0;
   switch (autoSelection) {
   case 0:
     auto_0();
@@ -109,10 +111,12 @@ void opcontrol() {
 
     if (ss1) {
       intake.move(127);
-      intake2.move(127);
     } else {
       intake.brake();
-      intake2.brake();
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      intake.move(-127);
     }
 
     // get left y and right y positions
