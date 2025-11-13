@@ -1,6 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "pros/misc.h"
+#include "pros/motors.h"
 #include "pros/rtos.hpp"
 
 /**
@@ -102,21 +103,24 @@ void autonomous() {
 bool ss1 = false;
 void opcontrol() {
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
-  intake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+  upperIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   while (true) {
     // subsystem toggle code
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)) {
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
       ss1 = !ss1;
     }
 
     if (ss1) {
-      intake.move(127);
+      lowerIntake.move(127);
     } else {
-      intake.brake();
+      lowerIntake.brake();
     }
 
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-      intake.move(-127);
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+      upperIntake.move(-127);
+    } else {
+      upperIntake.brake();
     }
 
     // get left y and right y positions

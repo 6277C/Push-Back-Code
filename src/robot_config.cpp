@@ -11,12 +11,13 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // Left Motor Group
-pros::MotorGroup right_motors({20, -19, 10}, pros::MotorGearset::blue);
+pros::MotorGroup right_motors({12, -13, 14}, pros::MotorGearset::blue);
 // Right Motor Group
-pros::MotorGroup left_motors({-11, 12, -2}, pros::MotorGearset::blue);
+pros::MotorGroup left_motors({-17, 18, -19}, pros::MotorGearset::blue);
 
 // Subsystem Motors
-pros::Motor intake(1, pros::MotorGearset::blue);
+pros::Motor lowerIntake(-16, pros::MotorGearset::blue);
+pros::Motor upperIntake(-15, pros::MotorGearset::blue);
 
 class CustomIMU : public pros::IMU {
 public:
@@ -32,47 +33,47 @@ private:
 };
 
 // create custom IMU with a scalar
-CustomIMU my_imu(9, 1.014);
+CustomIMU my_imu(2, 1);
 
 // Vertical Tracking Wheel
-pros::Rotation forward_tracker(5);
+pros::Rotation forward_tracker(-3);
 // Horizontal Tracking Wheel
-pros::Rotation sideways_tracker(1);
+pros::Rotation sideways_tracker(4);
 
-pros::adi::Potentiometer auto_selector(4);
+pros::adi::Potentiometer auto_selector(5);
 
 // Drivetrain Settings
-lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11.25,
-                              lemlib::Omniwheel::NEW_275, 450, 2);
+lemlib::Drivetrain drivetrain(&left_motors, &right_motors, 11.125,
+                              lemlib::Omniwheel::NEW_275, 600, 2);
 
 lemlib::TrackingWheel horizontal_tracking_wheel(&sideways_tracker,
-                                                lemlib::Omniwheel::NEW_2, 1);
+                                                lemlib::Omniwheel::NEW_2, -5);
 lemlib::TrackingWheel vertical_tracking_wheel(&forward_tracker,
-                                              lemlib::Omniwheel::NEW_2, .25);
+                                              lemlib::Omniwheel::NEW_2, -.5);
 
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, nullptr,
                             &horizontal_tracking_wheel, nullptr, &my_imu);
 
 // Lateral PID Controller
 lemlib::ControllerSettings
-    lateral_controller(10, 0, 3,
+    lateral_controller(10, 0, 40,
                        3,   // anti windup
                        1,   // small error range, in inches
                        100, // small error range timeout, in milliseconds
                        3,   // large error range, in inches
                        500, // large error range timeout, in milliseconds
-                       20   // maximum acceleration (slew)
+                       127   // maximum acceleration (slew)
     );
 
 // Angular PID Controller
 lemlib::ControllerSettings
-    angular_controller(2, 0, 10,
+    angular_controller(4.25, 0, 40,
                        3,   // anti windup
                        1,   // small error range, in degrees
                        100, // small error range timeout, in milliseconds
                        3,   // large error range, in degrees
                        500, // large error range timeout, in milliseconds
-                       0    // maximum acceleration (slew)
+                       127    // maximum acceleration (slew)
     );
 
 lemlib::Chassis chassis(drivetrain, // Drivetrain Settings
