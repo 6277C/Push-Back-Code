@@ -101,6 +101,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 bool ss1 = false;
+bool liftState = false;
 void opcontrol() {
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -117,10 +118,28 @@ void opcontrol() {
       lowerIntake.brake();
     }
 
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lowerIntake.move(-127);
+    }
+
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
       upperIntake.move(-127);
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      upperIntake.move(127);
     } else {
       upperIntake.brake();
+    }
+
+    //Pneumatics
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+      liftState = !liftState;
+      lift.set_value(liftState);
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
+      colorSort.set_value(true);
+    } else {
+      colorSort.set_value(false);
     }
 
     // get left y and right y positions
