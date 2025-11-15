@@ -102,6 +102,7 @@ void autonomous() {
  */
 bool ss1 = false;
 bool liftState = false;
+bool tongueState = false;
 void opcontrol() {
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -136,10 +137,9 @@ void opcontrol() {
       lift.set_value(liftState);
     }
 
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_X)){
-      colorSort.set_value(true);
-    } else {
-      colorSort.set_value(false);
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+      tongueState = !tongueState;
+      tongue.set_value(tongueState);
     }
 
     // get left y and right y positions

@@ -15,6 +15,7 @@ extern pros::Motor lowerIntake;
 extern pros::Motor upperIntake;
 extern pros::adi::DigitalOut lift;
 extern pros::adi::DigitalOut colorSort;
+extern pros::adi::DigitalOut tongue;
 extern pros::IMU imu;
 extern pros::Rotation forward_tracker;
 extern pros::Rotation sideways_tracker;

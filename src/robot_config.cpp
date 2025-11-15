@@ -23,6 +23,7 @@ pros::Motor upperIntake(-15, pros::MotorGearset::blue);
 //Pneumatics
 pros::adi::DigitalOut lift ('F', LOW);
 pros::adi::DigitalOut colorSort ('D', LOW);
+pros::adi::DigitalOut tongue ('G', LOW);
 class CustomIMU : public pros::IMU {
 public:
   CustomIMU(int port, double scalar)
