@@ -11,6 +11,13 @@
 // Controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
+pros::Motor FR (14, pros::MotorGearset::blue);
+pros::Motor MR (13, pros::MotorGearset::blue);
+pros::Motor BR (12, pros::MotorGearset::blue);
+pros::Motor FL (17, pros::MotorGearset::blue);
+pros::Motor ML (18, pros::MotorGearset::blue);
+pros::Motor BL (19, pros::MotorGearset::blue);
+
 // Left Motor Group
 pros::MotorGroup right_motors({12, -13, 14}, pros::MotorGearset::blue);
 // Right Motor Group

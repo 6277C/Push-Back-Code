@@ -11,6 +11,12 @@
 extern pros::Controller controller;
 extern pros::MotorGroup left_motors;
 extern pros::MotorGroup right_motors;
+extern pros::Motor FR;
+extern pros::Motor MR;
+extern pros::Motor BR;
+extern pros::Motor FL;
+extern pros::Motor ML;
+extern pros::Motor BL;
 extern pros::Motor lowerIntake;
 extern pros::Motor upperIntake;
 extern pros::adi::DigitalOut lift;

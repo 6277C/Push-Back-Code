@@ -2,9 +2,40 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/misc.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
+#include <cmath>
+#include <cstdio>
+#include <stdio.h>
+#include <string>
 
+using namespace pros;
+
+void dataLogging(){
+  FILE* logFile = fopen("/usd/test.csv", "w");
+  fputs("Time, Battery Pct., FRTemp, MRTemp, BRTemp, FLTemp, MLTemp, BLTemp\n", logFile);
+  while(millis() < 15000){
+    std::string FRtemp = std::to_string(FR.get_temperature());
+    std::string MRtemp = std::to_string(MR.get_temperature());
+    std::string BRtemp = std::to_string(BR.get_temperature());
+    std::string FLtemp = std::to_string(FL.get_temperature());
+    std::string MLtemp = std::to_string(ML.get_temperature());
+    std::string BLtemp = std::to_string(BL.get_temperature());
+    std::string battery = std::to_string(battery::get_capacity());
+    std::string time = std::to_string(std::round(pros::millis()/1000));
+    fprintf(logFile, "%s,", time.c_str());
+    fprintf(logFile, "%s,", battery.c_str());
+    fprintf(logFile, "%s,", FRtemp.c_str());
+    fprintf(logFile, "%s,", MRtemp.c_str());
+    fprintf(logFile, "%s,", BRtemp.c_str());
+    fprintf(logFile, "%s,", FLtemp.c_str());
+    fprintf(logFile, "%s,", MLtemp.c_str());
+    fprintf(logFile, "%s\n", BLtemp.c_str());
+    pros::delay(1000);
+  }
+  fclose(logFile);
+}
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -111,6 +142,7 @@ bool ss1 = false;
 bool liftState = false;
 bool tongueState = false;
 void opcontrol() {
+  Task datalogger(dataLogging);
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   upperIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
