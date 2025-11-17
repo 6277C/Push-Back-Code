@@ -40,7 +40,31 @@ void auto_0(){
     upperIntake.move(-127);
     lowerIntake.move(-127);
 }
-void auto_1(){}
+void auto_1(){
+    chassis.setPose(0,0,0);
+    chassis.moveToPoint(4, 32, 1500);
+    chassis.turnToPoint(-8, 32, 1000);
+    lift.set_value(true);
+    // //lowerIntake.move(127);
+    pros::Task antiJamTask(antiJam);
+    tongue.set_value(true);
+    chassis.moveToPoint(-9, 32, 1500, {.maxSpeed = 50});
+    chassis.moveToPoint(6, 32, 1000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 2});
+    tongue.set_value(false);
+    chassis.turnToPoint(20, 32, 1500);
+    chassis.moveToPose(22, 32, 90, 2000);
+    upperIntake.move(127);
+    pros::delay(3000);
+    upperIntake.brake();
+    lift.set_value(false);
+    chassis.moveToPoint(0, 33, 2000, {.forwards = false, .minSpeed = 10, .earlyExitRange = 4});
+    chassis.moveToPose(23, 15, 135, 2000, {.lead = 0.2});
+    chassis.moveToPoint(41, -2.5, 5000, {.maxSpeed = 50});
+    chassis.waitUntilDone();
+    antiJamTask.suspend();
+    upperIntake.move(127);
+    lowerIntake.move(127);
+}
 void auto_2(){}
 void auto_3(){}
 void auto_4(){}

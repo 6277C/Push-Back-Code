@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
@@ -41,7 +42,13 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void auto_toggle(){
+
+
+}
+void competition_initialize() {
+  //pros::lcd::register_btn0_cb(auto_toggle);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -58,7 +65,7 @@ void autonomous() {
   // int autoSelection = (auto_selector.get_value() / 
   //                     128   //divide the pot max value (1024) by the number of autos to get this value
   // );
-  int autoSelection = 0;
+  int autoSelection = 1;
   switch (autoSelection) {
   case 0:
     auto_0();
