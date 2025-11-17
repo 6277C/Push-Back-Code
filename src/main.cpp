@@ -113,20 +113,22 @@ void opcontrol() {
       ss1 = !ss1;
     }
 
-    if (ss1) {
+    
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lowerIntake.move(-127);
+    } else{
+     if(ss1) {
       lowerIntake.move(127);
     } else {
       lowerIntake.brake();
     }
-
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-      lowerIntake.move(-127);
-    }
+  }
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-      upperIntake.move(-127);
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
       upperIntake.move(127);
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+      upperIntake.move(-127);
     } else {
       upperIntake.brake();
     }

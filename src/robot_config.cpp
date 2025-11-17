@@ -18,7 +18,7 @@ pros::MotorGroup left_motors({-17, 18, -19}, pros::MotorGearset::blue);
 
 // Subsystem Motors
 pros::Motor lowerIntake(-16, pros::MotorGearset::blue);
-pros::Motor upperIntake(-15, pros::MotorGearset::blue);
+pros::Motor upperIntake(15, pros::MotorGearset::blue);
 
 //Pneumatics
 pros::adi::DigitalOut lift ('F', LOW);
