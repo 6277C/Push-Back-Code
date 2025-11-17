@@ -1,5 +1,6 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
@@ -41,7 +42,13 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void auto_toggle(){
+
+
+}
+void competition_initialize() {
+  //pros::lcd::register_btn0_cb(auto_toggle);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -58,7 +65,7 @@ void autonomous() {
   // int autoSelection = (auto_selector.get_value() / 
   //                     128   //divide the pot max value (1024) by the number of autos to get this value
   // );
-  int autoSelection = 0;
+  int autoSelection = 1;
   switch (autoSelection) {
   case 0:
     auto_0();
@@ -101,6 +108,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 bool ss1 = false;
+bool liftState = false;
+bool tongueState = false;
 void opcontrol() {
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -111,16 +120,35 @@ void opcontrol() {
       ss1 = !ss1;
     }
 
-    if (ss1) {
+    
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+      lowerIntake.move(-127);
+    } else{
+     if(ss1) {
       lowerIntake.move(127);
     } else {
       lowerIntake.brake();
     }
+  }
 
     if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+      upperIntake.move(127);
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
       upperIntake.move(-127);
     } else {
       upperIntake.brake();
+    }
+
+    //Pneumatics
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+      liftState = !liftState;
+      lift.set_value(liftState);
+    }
+
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+      tongueState = !tongueState;
+      tongue.set_value(tongueState);
     }
 
     // get left y and right y positions
