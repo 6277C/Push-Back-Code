@@ -12,9 +12,18 @@
 
 using namespace pros;
 
+// GLOBALS
+bool ss1 = false;
+bool liftState = false;
+bool tongueState = false;
+int liftcount = 0;
+int tonguecount = 0;
+
 void dataLogging(){
   FILE* logFile = fopen("/usd/test.csv", "w");
-  fputs("Time, Battery Pct., FRTemp, MRTemp, BRTemp, FLTemp, MLTemp, BLTemp\n", logFile);
+
+
+  fputs("Time, Battery Pct., FRTemp, MRTemp, BRTemp, FLTemp, MLTemp, BLTemp, LITemp, UITemp, LiftCount, LiftFirings, MLFirings\n", logFile);
   while(millis() < 15000){
     std::string FRtemp = std::to_string(FR.get_temperature());
     std::string MRtemp = std::to_string(MR.get_temperature());
@@ -22,6 +31,8 @@ void dataLogging(){
     std::string FLtemp = std::to_string(FL.get_temperature());
     std::string MLtemp = std::to_string(ML.get_temperature());
     std::string BLtemp = std::to_string(BL.get_temperature());
+    std::string LItemp = std::to_string(lowerIntake.get_temperature());
+    std::string UItemp = std::to_string(upperIntake.get_temperature());
     std::string battery = std::to_string(battery::get_capacity());
     std::string time = std::to_string(std::round(pros::millis()/1000));
     fprintf(logFile, "%s,", time.c_str());
@@ -31,8 +42,13 @@ void dataLogging(){
     fprintf(logFile, "%s,", BRtemp.c_str());
     fprintf(logFile, "%s,", FLtemp.c_str());
     fprintf(logFile, "%s,", MLtemp.c_str());
-    fprintf(logFile, "%s\n", BLtemp.c_str());
-    pros::delay(1000);
+    fprintf(logFile, "%s", BLtemp.c_str());
+    fprintf(logFile, "%s", LItemp.c_str());
+    fprintf(logFile, "%s", UItemp.c_str());
+    fprintf(logFile, "%s", std::to_string(liftcount).c_str());
+    fprintf(logFile, "%s", std::to_string(tonguecount).c_str());
+    fprintf(logFile, "\n");
+    delay(1000);
   }
   fclose(logFile);
 }
@@ -43,16 +59,16 @@ void dataLogging(){
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  pros::lcd::initialize(); // initialize brain screen
+  lcd::initialize(); // initialize brain screen
   chassis.calibrate();     // calibrate sensors
   // print position to brain screen
-  pros::Task screen_task([&]() {
+  Task screen_task([&]() {
     while (true) {
       // print robot location to the brain screen
-      pros::lcd::print(0, "X: %f", chassis.getPose().x);         // x
-      pros::lcd::print(1, "Y: %f", chassis.getPose().y);         // y
-      pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-      pros::delay(20);
+      lcd::print(0, "X: %f", chassis.getPose().x);         // x
+      lcd::print(1, "Y: %f", chassis.getPose().y);         // y
+      lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+      delay(20);
     }
   });
 }
@@ -138,9 +154,7 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-bool ss1 = false;
-bool liftState = false;
-bool tongueState = false;
+
 void opcontrol() {
   Task datalogger(dataLogging);
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
@@ -176,11 +190,13 @@ void opcontrol() {
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
       liftState = !liftState;
       lift.set_value(liftState);
+      if (liftState){ liftcount++; }
     }
 
     if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
       tongueState = !tongueState;
       tongue.set_value(tongueState);
+      if (tongueState) { tonguecount++; }
     }
 
     // get left y and right y positions
@@ -191,6 +207,6 @@ void opcontrol() {
     chassis.tank(leftY, rightY);
 
     // delay to save resources
-    pros::delay(25);
+    delay(25);
   }
 }
