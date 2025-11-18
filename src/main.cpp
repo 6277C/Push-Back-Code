@@ -112,7 +112,7 @@ void autonomous() {
   // int autoSelection = (auto_selector.get_value() / 
   //                     128   //divide the pot max value (1024) by the number of autos to get this value
   // );
-  int autoSelection = 1;
+  int autoSelection = 0;
   switch (autoSelection) {
   case 0:
     auto_0();
