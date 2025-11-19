@@ -13,28 +13,51 @@
 using namespace pros;
 
 // GLOBALS
+bool logging = true;
 bool ss1 = false;
 bool liftState = false;
 bool tongueState = false;
 int liftcount = 0;
 int tonguecount = 0;
 
-void dataLogging(){
-  FILE* logFile = fopen("/usd/test.csv", "w");
+std::string getNewLogFilename() {
+  int index = 0;
 
+  while (true) {
+    std::string path = "/usd/log" + std::to_string(index) + ".csv";
 
-  fputs("Time, Battery Pct., FRTemp, MRTemp, BRTemp, FLTemp, MLTemp, BLTemp, LITemp, UITemp, LiftCount, LiftFirings, MLFirings\n", logFile);
-  while(millis() < 15000){
-    std::string FRtemp = std::to_string(FR.get_temperature());
-    std::string MRtemp = std::to_string(MR.get_temperature());
-    std::string BRtemp = std::to_string(BR.get_temperature());
-    std::string FLtemp = std::to_string(FL.get_temperature());
-    std::string MLtemp = std::to_string(ML.get_temperature());
-    std::string BLtemp = std::to_string(BL.get_temperature());
-    std::string LItemp = std::to_string(lowerIntake.get_temperature());
-    std::string UItemp = std::to_string(upperIntake.get_temperature());
+    // Try opening in read mode to test if it exists
+    FILE *f = fopen(path.c_str(), "r");
+    if (!f) {
+      // File does NOT exist → use this name
+      return path;
+    }
+
+    // File exists → close and increment
+    fclose(f);
+    index++;
+  }
+}
+void dataLogging() {
+  std::string filename = getNewLogFilename();
+  FILE *logFile = fopen(filename.c_str(), "w");
+  // FILE* logFile = fopen("/usd/log.csv", "w");
+  fputs("Time, Battery Pct., FRTemp, MRTemp, BRTemp, FLTemp, MLTemp, BLTemp, "
+        "LITemp, UITemp, LiftFirings, MLFirings\n",
+        logFile);
+  while (logging == true) {
+    std::string FRtemp = std::to_string(std::round(FR.get_temperature()));
+    std::string MRtemp = std::to_string(std::round(MR.get_temperature()));
+    std::string BRtemp = std::to_string(std::round(BR.get_temperature()));
+    std::string FLtemp = std::to_string(std::round(FL.get_temperature()));
+    std::string MLtemp = std::to_string(std::round(ML.get_temperature()));
+    std::string BLtemp = std::to_string(std::round(BL.get_temperature()));
+    std::string LItemp = std::to_string(std::round(lowerIntake.get_temperature()));
+    std::string UItemp = std::to_string(std::round(upperIntake.get_temperature()));
     std::string battery = std::to_string(battery::get_capacity());
-    std::string time = std::to_string(std::round(pros::millis()/1000));
+    std::string time = std::to_string(std::round(pros::millis() / 1000));
+    std::string liftcountstr = std::to_string(liftcount);
+    std::string tonguecountstr = std::to_string(tonguecount);
     fprintf(logFile, "%s,", time.c_str());
     fprintf(logFile, "%s,", battery.c_str());
     fprintf(logFile, "%s,", FRtemp.c_str());
@@ -42,11 +65,11 @@ void dataLogging(){
     fprintf(logFile, "%s,", BRtemp.c_str());
     fprintf(logFile, "%s,", FLtemp.c_str());
     fprintf(logFile, "%s,", MLtemp.c_str());
-    fprintf(logFile, "%s", BLtemp.c_str());
-    fprintf(logFile, "%s", LItemp.c_str());
-    fprintf(logFile, "%s", UItemp.c_str());
-    fprintf(logFile, "%s", std::to_string(liftcount).c_str());
-    fprintf(logFile, "%s", std::to_string(tonguecount).c_str());
+    fprintf(logFile, "%s,", BLtemp.c_str());
+    fprintf(logFile, "%s,", LItemp.c_str());
+    fprintf(logFile, "%s,", UItemp.c_str());
+    fprintf(logFile, "%s,", liftcountstr.c_str());
+    fprintf(logFile, "%s,", tonguecountstr.c_str());
     fprintf(logFile, "\n");
     delay(1000);
   }
@@ -59,8 +82,11 @@ void dataLogging(){
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  lcd::initialize(); // initialize brain screen
-  chassis.calibrate();     // calibrate sensors
+  lcd::initialize();   // initialize brain screen
+  chassis.calibrate(); // calibrate sensors
+  if (usd::is_installed()){  // check if sd card is installed and run logger
+  Task datalogger(dataLogging);
+  }
   // print position to brain screen
   Task screen_task([&]() {
     while (true) {
@@ -89,12 +115,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void auto_toggle(){
-
-
-}
+void auto_toggle() {}
 void competition_initialize() {
-  //pros::lcd::register_btn0_cb(auto_toggle);
+  // pros::lcd::register_btn0_cb(auto_toggle);
 }
 
 /**
@@ -109,8 +132,9 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  // int autoSelection = (auto_selector.get_value() / 
-  //                     128   //divide the pot max value (1024) by the number of autos to get this value
+  // int autoSelection = (auto_selector.get_value() /
+  //                     128   //divide the pot max value (1024) by the number
+  //                     of autos to get this value
   // );
   int autoSelection = 0;
   switch (autoSelection) {
@@ -156,7 +180,6 @@ void autonomous() {
  */
 
 void opcontrol() {
-  Task datalogger(dataLogging);
   chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
   lowerIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
   upperIntake.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
@@ -166,37 +189,45 @@ void opcontrol() {
       ss1 = !ss1;
     }
 
-    
-
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
       lowerIntake.move(-127);
-    } else{
-     if(ss1) {
-      lowerIntake.move(127);
     } else {
-      lowerIntake.brake();
+      if (ss1) {
+        lowerIntake.move(127);
+      } else {
+        lowerIntake.brake();
+      }
     }
-  }
 
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
       upperIntake.move(127);
-    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+    } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
       upperIntake.move(-127);
     } else {
       upperIntake.brake();
     }
 
-    //Pneumatics
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)){
+    // Pneumatics
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
       liftState = !liftState;
       lift.set_value(liftState);
-      if (liftState){ liftcount++; }
+      if (liftState) {
+        liftcount++;
+      }
     }
 
-    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)){
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
       tongueState = !tongueState;
       tongue.set_value(tongueState);
-      if (tongueState) { tonguecount++; }
+      if (tongueState) {
+        tonguecount++;
+      }
+    }
+
+    //Logging Exit
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_UP)){
+      logging = false;
+      controller.rumble(".-.");
     }
 
     // get left y and right y positions
