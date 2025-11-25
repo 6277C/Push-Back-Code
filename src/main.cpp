@@ -17,6 +17,7 @@ bool logging = true;
 bool ss1 = false;
 bool liftState = false;
 bool tongueState = false;
+bool colorSortState = false;
 int liftcount = 0;
 int tonguecount = 0;
 
@@ -136,7 +137,7 @@ void autonomous() {
   //                     128   //divide the pot max value (1024) by the number
   //                     of autos to get this value
   // );
-  int autoSelection = 0;
+  int autoSelection = 1;
   switch (autoSelection) {
   case 0:
     auto_0();
@@ -222,6 +223,15 @@ void opcontrol() {
       if (tongueState) {
         tonguecount++;
       }
+    }
+
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+      colorSortState = !colorSortState;
+      colorSort.set_value(colorSortState);
+    }
+
+    if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+      odomLifter.set_value(HIGH);
     }
 
     //Logging Exit
